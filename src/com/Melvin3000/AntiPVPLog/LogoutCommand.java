@@ -38,6 +38,8 @@ public class LogoutCommand implements CommandExecutor {
 		AntiPVPLog.instance.getServer().getScheduler().runTaskLater(AntiPVPLog.instance, new Runnable() {
 			public void run() {
 				if (LogoutCheck.loggingOut.contains(player.getUniqueId())) {
+					LogoutCheck.loggingOut.remove(player.getUniqueId());
+					LogoutCheck.canLogout.add(player.getUniqueId());
 					player.kickPlayer("Safely logged out");
 				}
 			}

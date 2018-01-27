@@ -49,7 +49,6 @@ public class PlayerJoin implements Listener {
 
 			if (found != null) {
 				AntiPVPLog.dummySkeletons.remove(found);
-				System.out.println("removing skeleton");
 			}
 		}
 

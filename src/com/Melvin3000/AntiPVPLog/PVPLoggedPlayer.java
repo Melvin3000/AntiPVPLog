@@ -34,6 +34,7 @@ public class PVPLoggedPlayer {
 		this.xpDropped = (xpDropped > 100) ? 100 : xpDropped;
 
 		AntiPVPLog.dummySkeletons.put(skeleton.getUniqueId(), this);
+		scheduleRemoval();
 	}
 
 	/**
@@ -76,6 +77,21 @@ public class PVPLoggedPlayer {
 
 		return spooky;
 	}
+	
+	/**
+	 * Schedule this dummy skeleton to be removed after the logout cooldown
+	 */
+	private void scheduleRemoval() {
+
+		AntiPVPLog.instance.getServer().getScheduler().runTaskLater(AntiPVPLog.instance, new Runnable() {
+			public void run() {
+				skeleton.remove();
+				AntiPVPLog.dummySkeletons.remove(uuid);
+				AntiPVPLog.instance.getLogger().info(name + "'s skeleton logged out safely.");
+			}
+		}, LogoutCheck.LOGOUT_COOLDOWN * 20L);
+	}
+	
 
 	public UUID getUuid() {
 		return uuid;

@@ -12,6 +12,7 @@ public class LogoutCheck {
 	
 	public static int LOGOUT_COOLDOWN = 10;
 	public static HashSet<UUID> loggingOut = new HashSet<UUID>();
+	public static HashSet<UUID> canLogout = new HashSet<UUID>();
 	
 	private static int minx = -31;
 	private static int minz = -31;
