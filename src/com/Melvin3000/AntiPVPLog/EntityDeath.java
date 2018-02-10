@@ -37,8 +37,8 @@ public class EntityDeath implements Listener {
 	public void killOfflinePlayer(PVPLoggedPlayer player) {
 
 		AntiPVPLog.dummySkeletons.remove(player.getSkeleton().getUniqueId());
-		AntiPVPLog.instance.getServer().broadcastMessage(player.getName() + " should not have pvp logged");
-		AntiPVPLog.instance.getLogger().info(player.getName() + " died after pvp logging.");
+		AntiPVPLog.instance.getServer().broadcastMessage(player.getName() + " should not have PvP logged");
+		AntiPVPLog.instance.getLogger().info(player.getName() + " died after PvP logging.");
 
 		/* Lazy way to save UUIDs, could be replaced with SQL or something */
 		FileConfiguration config = AntiPVPLog.instance.getConfig();

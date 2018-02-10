@@ -24,7 +24,7 @@ public class PlayerJoin implements Listener {
 			player.getInventory().clear(); // Clearing inventory first stops dupe glitch using a totem of undying
 			player.setLevel(0);
 			player.setHealth(0);
-			player.sendMessage(ChatColor.DARK_RED + "You died from PVP Logging");
+			player.sendMessage(ChatColor.DARK_RED + "You died from PvP logging");
 
 			/* Delete player from list of to-be-killed players */
 			config.set(player.getUniqueId().toString(), null);
