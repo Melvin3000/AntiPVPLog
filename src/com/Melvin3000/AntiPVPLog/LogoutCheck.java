@@ -5,8 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class LogoutCheck {
 	
