@@ -11,7 +11,9 @@ public class EntityDamage implements Listener {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 
-		/* Disable offline damage by sources other than entities */
+		/* Disable offline damage by sources other than entities
+		 * Note that EntityDamageByEntity.java will ensure that eneity
+		 * damage only comes directly from other player. */
 		if (event.getCause() != DamageCause.ENTITY_ATTACK && AntiPVPLog.dummySkeletons.containsKey(event.getEntity().getUniqueId())) {
 			event.setCancelled(true);
 			return;
