@@ -1,6 +1,8 @@
 package com.Melvin3000.AntiPVPLog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.entity.Entity;
@@ -11,10 +13,15 @@ public class AntiPVPLog extends JavaPlugin {
 
 	public static JavaPlugin instance;
 	public static HashMap<UUID, PVPLoggedPlayer> dummySkeletons = new HashMap<UUID, PVPLoggedPlayer>();
+	
+	public static List<String> activeWorlds = new ArrayList<String>();
 
 	public void onEnable() {
 		instance = this;
-
+		activeWorlds = getActiveWorlds();
+		
+		getLogger().info("Active Worlds: " + activeWorlds.toString());
+		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlayerQuit(), this);
 		pm.registerEvents(new EntityDeath(), this);
@@ -36,6 +43,10 @@ public class AntiPVPLog extends JavaPlugin {
 			}
 		}
 
+	}
+	
+	public List<String> getActiveWorlds() {
+		return getConfig().getStringList("ActiveWorlds");
 	}
 
 }

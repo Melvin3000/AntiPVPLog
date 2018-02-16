@@ -29,6 +29,8 @@ public class PVPLoggedPlayer {
 		this.name = player.getName();
 		this.skeleton = spawnDummySkeleton(player);
 
+		logInventory(player);
+		
 		/* Simulates dropped player XP as per: https://minecraft.gamepedia.com/Experience#Behavior */
 		this.xpDropped = player.getLevel() * 7;
 		this.xpDropped = (xpDropped > 100) ? 100 : xpDropped;
@@ -91,6 +93,30 @@ public class PVPLoggedPlayer {
 			}
 		}, LogoutCheck.LOGOUT_COOLDOWN * 20L);
 	}
+	
+	/**
+	 * Log inventory, just in case as per:
+	 * https://github.com/C4K3/Events/blob/master/src/EventCommand.java#L80
+	 */
+	private void logInventory(Player player) {
+		
+		String sInventoryContents = "";
+
+		for (ItemStack itemStack : inventory.getContents()) {
+			if (itemStack == null)
+				continue;
+
+			String tmp = itemStack.getType().toString()
+				+ "." + itemStack.getAmount()
+				+ "." + itemStack.getDurability()
+				+ "." + itemStack.getEnchantments().toString();
+			tmp = tmp.replaceAll(" ", "");
+			sInventoryContents += " " + tmp;
+		}
+		
+		AntiPVPLog.instance.getLogger().info(name + " potentially PvP logged: " + player.getLevel() + sInventoryContents);
+	}
+	
 	
 
 	public UUID getUuid() {

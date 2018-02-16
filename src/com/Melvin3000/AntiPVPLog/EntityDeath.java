@@ -42,7 +42,7 @@ public class EntityDeath implements Listener {
 
 		/* Lazy way to save UUIDs, could be replaced with SQL or something */
 		FileConfiguration config = AntiPVPLog.instance.getConfig();
-		config.set(player.getUuid().toString(), true);
+		config.set("PVPLoggers." + player.getUuid().toString(), true);
 		AntiPVPLog.instance.saveConfig();
 	}
 

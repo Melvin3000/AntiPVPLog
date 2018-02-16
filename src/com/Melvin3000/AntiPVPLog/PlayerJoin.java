@@ -19,7 +19,8 @@ public class PlayerJoin implements Listener {
 
 		/* Kill players who PVP Logged the last time they left server */
 		FileConfiguration config = AntiPVPLog.instance.getConfig();
-		if (config.contains(player.getUniqueId().toString())) {
+		
+		if (config.contains("PVPLoggers." + player.getUniqueId().toString())) {
 
 			player.getInventory().clear(); // Clearing inventory first stops dupe glitch using a totem of undying
 			player.setLevel(0);
@@ -27,7 +28,7 @@ public class PlayerJoin implements Listener {
 			player.sendMessage(ChatColor.DARK_RED + "You died from PvP logging");
 
 			/* Delete player from list of to-be-killed players */
-			config.set(player.getUniqueId().toString(), null);
+			config.set("PVPLoggers." + player.getUniqueId().toString(), null);
 			AntiPVPLog.instance.saveConfig();
 		}
 

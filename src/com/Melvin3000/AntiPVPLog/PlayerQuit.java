@@ -13,6 +13,10 @@ public class PlayerQuit implements Listener {
 
 		Player player = event.getPlayer();
 
+		if (!AntiPVPLog.activeWorlds.contains(player.getWorld().getName())) {
+			return;
+		}
+		
 		if (LogoutCheck.canLogout.contains(player.getUniqueId())) {
 			LogoutCheck.canLogout.remove(player.getUniqueId());
 			return;
