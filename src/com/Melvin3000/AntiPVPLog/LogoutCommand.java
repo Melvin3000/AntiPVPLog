@@ -14,8 +14,13 @@ public class LogoutCommand implements CommandExecutor {
 			sender.sendMessage("You must be a player to do that.");
 			return true;
 		}
-
 		Player player = (Player) sender;
+
+		if (!AntiPVPLog.activeWorlds.contains(player.getWorld().getName())) {
+			player.kickPlayer("Safely logged out");
+			return true;
+		}
+
 		scheduleLogout(player);
 		return true;
 	}
