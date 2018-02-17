@@ -17,6 +17,7 @@ public class AntiPVPLog extends JavaPlugin {
 	public static List<String> activeWorlds = new ArrayList<String>();
 
 	public void onEnable() {
+		saveConfig();
 		instance = this;
 		activeWorlds = getActiveWorlds();
 		
