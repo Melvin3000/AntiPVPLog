@@ -17,12 +17,10 @@ public class PVPLoggedPlayer {
 
 	private int xpDropped;
 	private PlayerInventory inventory;
-
+	
 	/**
 	 * Stores data on pvp logged player
-	 * 
-	 * @param player
-	 *            player who pvp logged
+	 * @param player player who pvp logged
 	 */
 	public PVPLoggedPlayer(Player player) {
 
@@ -32,7 +30,7 @@ public class PVPLoggedPlayer {
 		this.skeleton = spawnDummySkeleton(player);
 
 		logInventory(player);
-
+		
 		/* Simulates dropped player XP as per: https://minecraft.gamepedia.com/Experience#Behavior */
 		this.xpDropped = player.getLevel() * 7;
 		this.xpDropped = (xpDropped > 100) ? 100 : xpDropped;
@@ -43,16 +41,14 @@ public class PVPLoggedPlayer {
 
 	/**
 	 * Spawns dummy skeleton with inventory and location of player
-	 * 
-	 * @param player
-	 *            player who pvp logged
+	 * @param player player who pvp logged
 	 * @return UUID of created skeleton
 	 */
 	private Skeleton spawnDummySkeleton(Player player) {
-
+		
 		/* Skeletons throw an error if you attempt to give them more than 20 hearts (maybe possible with golden apples) */
 		double health = (player.getHealth() > 20) ? 20 : player.getHealth();
-
+		
 		ItemStack[] armor = inventory.getArmorContents();
 		ItemStack mainhand = inventory.getItemInMainHand();
 		ItemStack offhand = inventory.getItemInOffHand();
@@ -60,7 +56,7 @@ public class PVPLoggedPlayer {
 		/* If player had no helmet then replace it with a button (invisible helmet but stops sunlight damage) */
 		ItemStack placeholderHelmet = new ItemStack(Material.STONE_BUTTON, 1);
 		armor[3] = (armor[3] == null) ? placeholderHelmet : armor[3];
-
+		
 		Skeleton spooky = (Skeleton) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON);
 
 		spooky.setCustomName(player.getName());
@@ -83,7 +79,7 @@ public class PVPLoggedPlayer {
 
 		return spooky;
 	}
-
+	
 	/**
 	 * Schedule this dummy skeleton to be removed after the logout cooldown
 	 */
@@ -91,42 +87,37 @@ public class PVPLoggedPlayer {
 
 		AntiPVPLog.instance.getServer().getScheduler().runTaskLater(AntiPVPLog.instance, new Runnable() {
 			public void run() {
-
-				if (AntiPVPLog.dummySkeletons.keySet().contains(skeleton.getUniqueId())) {
-					despawn();
-				}
-
+				skeleton.remove();
+				AntiPVPLog.dummySkeletons.remove(uuid);
+				AntiPVPLog.instance.getLogger().info(name + "'s skeleton logged out safely.");
 			}
 		}, LogoutCheck.LOGOUT_COOLDOWN * 20L);
 	}
-
+	
 	/**
-	 * Log inventory, just in case as per: https://github.com/C4K3/Events/blob/master/src/EventCommand.java#L80
+	 * Log inventory, just in case as per:
+	 * https://github.com/C4K3/Events/blob/master/src/EventCommand.java#L80
 	 */
 	private void logInventory(Player player) {
-
+		
 		String sInventoryContents = "";
 
 		for (ItemStack itemStack : inventory.getContents()) {
 			if (itemStack == null)
 				continue;
 
-			String tmp = itemStack.getType().toString() + "." + itemStack.getAmount() + "." + itemStack.getDurability() + "." + itemStack.getEnchantments().toString();
+			String tmp = itemStack.getType().toString()
+				+ "." + itemStack.getAmount()
+				+ "." + itemStack.getDurability()
+				+ "." + itemStack.getEnchantments().toString();
 			tmp = tmp.replaceAll(" ", "");
 			sInventoryContents += " " + tmp;
 		}
-
+		
 		AntiPVPLog.instance.getLogger().info(name + " potentially PvP logged: " + player.getLevel() + sInventoryContents);
 	}
-
-	/**
-	 * Despawns skeleton and removes reference from plugin
-	 */
-	public void despawn() {
-		skeleton.remove();
-		AntiPVPLog.dummySkeletons.remove(skeleton.getUniqueId());
-		AntiPVPLog.instance.getLogger().info(name + "'s skeleton logged out safely.");
-	}
+	
+	
 
 	public UUID getUuid() {
 		return uuid;
