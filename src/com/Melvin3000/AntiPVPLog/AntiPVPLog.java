@@ -30,6 +30,7 @@ public class AntiPVPLog extends JavaPlugin {
 		pm.registerEvents(new EntityDamage(), this);
 		pm.registerEvents(new EntityDamageByEntity(), this);
 		pm.registerEvents(new PlayerMove(), this);
+		pm.registerEvents(new ChunkUnload(), this);
 
 		getCommand("logout").setExecutor(new LogoutCommand());
 	}
