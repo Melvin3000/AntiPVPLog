@@ -16,7 +16,8 @@ public class ChunkUnload implements Listener {
 		}
 
 		/* Despawn any skeletons before chunk unloads */
-		Iterator<PVPLoggedPlayer> iterator = AntiPVPLog.dummySkeletons.values().iterator();
+		@SuppressWarnings("unchecked")
+		Iterator<PVPLoggedPlayer> iterator = ((HashMap<UUID, PVPLoggedPlayer>) AntiPVPLog.dummySkeletons.clone()).values().iterator();
 		while (iterator.hasNext()) {
 
 			PVPLoggedPlayer spooky = iterator.next();
