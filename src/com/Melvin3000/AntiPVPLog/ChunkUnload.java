@@ -1,6 +1,8 @@
 package com.Melvin3000.AntiPVPLog;
 
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
