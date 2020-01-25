@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.bukkit.Statistic;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,7 +16,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_14_R1.NBTTagCompound;
 
 public class EntityDeath implements Listener {
 
@@ -35,13 +33,13 @@ public class EntityDeath implements Listener {
 			event.getDrops().clear();
 			event.getDrops().addAll(Arrays.asList(dummy.getInventory().getStorageContents()));
 			event.getDrops().addAll(Arrays.asList(dummy.getInventory().getArmorContents()));
-			
+
 			killOfflinePlayer(dummy);
-			
+
 			Player killer = entity.getKiller();
 			if (killer != null) {
 				showDeathMessage(dummy, killer);
-	
+
 				/* Clean up statistics */
 				killer.incrementStatistic(Statistic.PLAYER_KILLS);
 				killer.decrementStatistic(Statistic.KILL_ENTITY, EntityType.SKELETON);
@@ -54,7 +52,7 @@ public class EntityDeath implements Listener {
 	}
 
 	/**
-	 * Save player UUID to kill them when they rejoin next 
+	 * Save player UUID to kill them when they rejoin next
 	 * @param player player to save
 	 */
 	public void killOfflinePlayer(PVPLoggedPlayer player) {
@@ -84,7 +82,7 @@ public class EntityDeath implements Listener {
 			deathMessage.addExtra(" using ");
 			deathMessage.addExtra(getHoverableItemComponent(weaponUsed));
 		}
-		
+
 		for (Player p : AntiPVPLog.instance.getServer().getOnlinePlayers()) {
 			p.spigot().sendMessage(deathMessage);
 		}
@@ -103,12 +101,11 @@ public class EntityDeath implements Listener {
 		info.addExtra(itemName);
 		info.addExtra("]");
 
-		/* Convert item to JSON using nms trickery to get hoverable item json
-		 * https://www.spigotmc.org/threads/tut-item-tooltips-with-the-chatcomponent-api.65964 */
-		String nbtInfoString = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound()).toString();
-		info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(nbtInfoString).create()));
+		String nbtInfoString = ReflectionUtil.getItemStackAsJSON(item);
+		if (nbtInfoString != null) { // If something goes wrong avoid sending with a null nbtInfoString as that causes clients to crash
+			info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(nbtInfoString).create()));
+		}
 
 		return info;
 	}
-
 }
