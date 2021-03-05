@@ -1,16 +1,18 @@
 package com.Melvin3000.AntiPVPLog;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LogoutCheck {
 	
 	public static int LOGOUT_COOLDOWN = 10;
-	public static HashSet<UUID> loggingOut = new HashSet<UUID>();
+	public static HashMap<UUID, BukkitRunnable> loggingOut = new HashMap<UUID, BukkitRunnable>();
 	public static HashSet<UUID> canLogout = new HashSet<UUID>();
 	
 	private static int minx = -31;
@@ -42,8 +44,9 @@ public class LogoutCheck {
 	 * @param player
 	 */
 	public static void cancelLogout(Player player) {
-		if (loggingOut.contains(player.getUniqueId())) {
-			loggingOut.remove(player.getUniqueId());
+		BukkitRunnable r = loggingOut.remove(player.getUniqueId());
+		if (r != null) {
+			r.cancel();
 			player.sendMessage(ChatColor.RED + "Logout canceled.");
 		}
 	}
