@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LogoutCommand implements CommandExecutor {
 
@@ -36,18 +37,21 @@ public class LogoutCommand implements CommandExecutor {
 			return;
 		}
 
+		BukkitRunnable r = new BukkitRunnable() {
+			public void run() {
+				LogoutCheck.loggingOut.remove(player.getUniqueId());
+				LogoutCheck.canLogout.add(player.getUniqueId());
+				player.kickPlayer("Safely logged out");
+			}
+		};
+
+		if (LogoutCheck.loggingOut.putIfAbsent(player.getUniqueId(), r) != null) {
+			player.sendMessage(ChatColor.RED + "You have already scheduled /logout!");
+			return;
+		}
+
 		player.sendMessage(ChatColor.AQUA + "Safely logging out in " + LogoutCheck.LOGOUT_COOLDOWN + " seconds.");
 
-		LogoutCheck.loggingOut.add(player.getUniqueId());
-
-		AntiPVPLog.instance.getServer().getScheduler().runTaskLater(AntiPVPLog.instance, new Runnable() {
-			public void run() {
-				if (LogoutCheck.loggingOut.contains(player.getUniqueId())) {
-					LogoutCheck.loggingOut.remove(player.getUniqueId());
-					LogoutCheck.canLogout.add(player.getUniqueId());
-					player.kickPlayer("Safely logged out");
-				}
-			}
-		}, LogoutCheck.LOGOUT_COOLDOWN * 20L);
+		r.runTaskLater(AntiPVPLog.instance, LogoutCheck.LOGOUT_COOLDOWN * 20L);
 	}
 }
