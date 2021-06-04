@@ -20,7 +20,10 @@ public class AntiPVPLog extends JavaPlugin {
 		saveConfig();
 		instance = this;
 		activeWorlds = getActiveWorlds();
-		
+
+		// Checks for the jail plugin and if it is present sets it up
+		JailPlugin.initJail();
+
 		getLogger().info("Active Worlds: " + activeWorlds.toString());
 		
 		PluginManager pm = getServer().getPluginManager();
@@ -46,7 +49,7 @@ public class AntiPVPLog extends JavaPlugin {
 		}
 
 	}
-	
+
 	public List<String> getActiveWorlds() {
 		return getConfig().getStringList("ActiveWorlds");
 	}

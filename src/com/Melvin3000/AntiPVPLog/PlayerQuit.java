@@ -26,6 +26,10 @@ public class PlayerQuit implements Listener {
 			return;
 		}
 
+		if (JailPlugin.isPlayerJailed(player.getUniqueId())) {
+			return;
+		}
+
 		if (player.getGameMode() != GameMode.SURVIVAL) {
 			return;
 		}

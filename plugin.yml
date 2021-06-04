@@ -6,3 +6,4 @@ commands:
     logout:
         description: Safe logout from server
         usage: /<command>
+softdepend: [Jail]
