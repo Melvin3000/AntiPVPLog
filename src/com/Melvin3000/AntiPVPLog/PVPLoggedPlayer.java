@@ -1,5 +1,8 @@
 package com.Melvin3000.AntiPVPLog;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -8,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public class PVPLoggedPlayer {
 
@@ -100,19 +104,40 @@ public class PVPLoggedPlayer {
 	 * Log inventory, just in case as per: https://github.com/C4K3/Events/blob/master/src/EventCommand.java#L80
 	 */
 	private void logInventory(Player player) {
+		String sInventoryContents;
+		try {
+			ByteArrayOutputStream bytearray = new ByteArrayOutputStream();
+			OutputStream base64 = Base64.getEncoder().wrap(bytearray);
+			BukkitObjectOutputStream bukkitstream = new BukkitObjectOutputStream(base64);
 
-		String sInventoryContents = "";
+			int len = 0;
+			for (ItemStack itemStack : inventory.getContents()) {
+				if (itemStack == null) {
+					continue;
+				}
+				len += 1;
+			}
+			bukkitstream.writeInt(len);
 
-		for (ItemStack itemStack : inventory.getContents()) {
-			if (itemStack == null)
-				continue;
+			for (ItemStack itemStack : inventory.getContents()) {
+				if (itemStack == null) {
+					continue;
+				}
 
-			String tmp = itemStack.getType().toString() + "." + itemStack.getAmount() + "." + itemStack.getDurability() + "." + itemStack.getEnchantments().toString();
-			tmp = tmp.replaceAll(" ", "");
-			sInventoryContents += " " + tmp;
+				bukkitstream.writeObject(itemStack);
+			}
+
+			bukkitstream.close();
+			base64.close();
+
+			sInventoryContents = new String(bytearray.toByteArray());
+		} catch (Exception e) {
+			sInventoryContents = "Error logging inventory contents:" + e;
+			e.printStackTrace();
 		}
 
-		AntiPVPLog.instance.getLogger().info(name + " potentially PvP logged: " + player.getLevel() + sInventoryContents);
+
+		AntiPVPLog.instance.getLogger().info(String.format("%s potentially PvP logged: %d %s", name, player.getLevel(), sInventoryContents));
 	}
 
 	/**
