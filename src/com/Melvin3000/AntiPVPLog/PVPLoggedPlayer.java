@@ -13,7 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.Level;
+
 public class PVPLoggedPlayer {
+	private static Logger INVENTORY_LOGGER = LogManager.getLogger("InventoryLog");
+	private static final Marker INVENTORY_MARKER = MarkerManager.getMarker("INVENTORY");
 
 	private UUID uuid;
 	private Skeleton skeleton;
@@ -104,7 +112,10 @@ public class PVPLoggedPlayer {
 	 * Log inventory, just in case as per: https://github.com/C4K3/Events/blob/master/src/EventCommand.java#L80
 	 */
 	private void logInventory(Player player) {
-		String sInventoryContents;
+		if (!INVENTORY_LOGGER.isDebugEnabled()) {
+			return;
+		}
+
 		try {
 			ByteArrayOutputStream bytearray = new ByteArrayOutputStream();
 			OutputStream base64 = Base64.getEncoder().wrap(bytearray);
@@ -130,14 +141,11 @@ public class PVPLoggedPlayer {
 			bukkitstream.close();
 			base64.close();
 
-			sInventoryContents = new String(bytearray.toByteArray());
+			INVENTORY_LOGGER.debug(INVENTORY_MARKER, String.format("%s potentially PvP logged: %d %s", name, player.getLevel(), bytearray.toString()));
 		} catch (Exception e) {
-			sInventoryContents = "Error logging inventory contents:" + e;
+			AntiPVPLog.instance.getLogger().warning("Failed to log inventory: " + e);
 			e.printStackTrace();
 		}
-
-
-		AntiPVPLog.instance.getLogger().info(String.format("%s potentially PvP logged: %d %s", name, player.getLevel(), sInventoryContents));
 	}
 
 	/**
